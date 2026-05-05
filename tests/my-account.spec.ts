@@ -100,6 +100,24 @@ test.describe(
         await myAccountPage.changePassword(ENV.BO_PASSWORD, NEW_PASSWORD);
         await myAccountPage.expectSuccessMessage();
       });
+
+      test("BO-ACCT-012 - Validar requisitos de contraseña", async ({ page }) => {
+        const myAccountPage = new BackofficeMyAccountPage(page);
+
+        // Click the password edit button
+        await myAccountPage.passwordEditButton.waitFor({ state: 'visible', timeout: 5000 });
+        await myAccountPage.passwordEditButton.click();
+        await page.waitForTimeout(1000);
+
+        // Fill with invalid password (less than 12 chars, no uppercase, no numbers, no special chars)
+        await myAccountPage.fillCurrentPassword(ENV.BO_PASSWORD);
+        await myAccountPage.fillNewPassword("abc");
+        await myAccountPage.fillConfirmPassword("abc");
+
+        // Verify error message is visible
+        const errorVisible = await page.locator('text=/contraseña.*requisitos|password.*requirements|no cumple/i').first().isVisible();
+        expect(errorVisible).toBe(true);
+      });
     });
   }
 );
