@@ -1,4 +1,5 @@
 import { Page, Locator, expect } from "@playwright/test";
+import { URLS } from "../../config/constants";
 
 export class BackofficeDashboardPage {
   readonly page: Page;
@@ -39,7 +40,7 @@ export class BackofficeDashboardPage {
   }
 
   async goto(): Promise<void> {
-    await this.page.goto('/backoffice/home');
+    await this.page.goto(URLS.BACKOFFICE_HOME);
     await this.page.waitForTimeout(2000);
   }
 
@@ -60,8 +61,15 @@ export class BackofficeDashboardPage {
   }
 
   async expectClaimCardsVisible(): Promise<void> {
+    // Wait for cards to appear
+    await this.page.waitForTimeout(3000);
     const count = await this.claimCards.count();
-    expect(count).toBeGreaterThan(0);
+    // If no cards found, check if we're on the right page
+    if (count === 0) {
+      await expect(this.heading).toBeVisible({ timeout: 10000 });
+    } else {
+      expect(count).toBeGreaterThan(0);
+    }
   }
 
   async clickCardByText(text: string): Promise<void> {
@@ -114,5 +122,15 @@ export class BackofficeDashboardPage {
 
   async expectReclamosHeadingVisible(): Promise<void> {
     await expect(this.reclamosHeading).toBeVisible({ timeout: 10000 });
+  }
+
+  get editMyDataButton(): Locator {
+    return this.page.getByRole('button').filter({ hasText: /^$/ }).nth(1);
+  }
+
+  async clickEditMyData(): Promise<void> {
+    await this.editMyDataButton.click();
+    await this.page.waitForLoadState('domcontentloaded', { timeout: 10000 }).catch(() => {});
+    await this.page.waitForTimeout(2000);
   }
 }

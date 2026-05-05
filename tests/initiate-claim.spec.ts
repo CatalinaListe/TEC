@@ -1,9 +1,7 @@
 import { test, expect } from "./fixtures/test-fixtures";
-import {
-  IniciarReclamoAerolineasPage,
-  BASE_URL,
-} from "./pages/frontend/InitiateClaimPage";
+import { IniciarReclamoAerolineasPage } from "./pages/frontend/InitiateClaimPage";
 import { TempMailPage } from "./helpers/TempMailHelper";
+import { URLS, TEST_DATA } from "./config/constants";
 
 test.describe(
   "Frontend - Iniciar Reclamo Aerolineas",
@@ -39,7 +37,7 @@ test.describe(
 
       await aeroPage.fillCodigoEmail(codigo);
 
-      await expect(page).toHaveURL(`${BASE_URL}/datos-personales/paso-2`);
+      await expect(page).toHaveURL(`${URLS.BASE}/datos-personales/paso-2`);
 
       await aeroPage.completarDatosPersonales();
       await aeroPage.clickContinuar();
@@ -132,7 +130,7 @@ test.describe(
       await aeroPage.completePassengerDetails();
 
       await page.waitForTimeout(3000);
-      await expect(page).toHaveURL(`${BASE_URL}/datos-personales/paso-1`);
+      await expect(page).toHaveURL(`${URLS.BASE}/datos-personales/paso-1`);
 
       // Ingresar email inválido usando el selector correcto
       await aeroPage.fillEmailOtro("emailinvalido");

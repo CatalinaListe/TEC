@@ -1,19 +1,15 @@
 import { test, expect } from './fixtures/test-fixtures';
 import { BackofficeLoginPage } from './pages/backoffice/BackofficeLoginPage';
 import { ClaimsListPage } from './pages/backoffice/ClaimsListPage';
-
-const TEST_USER = {
-  email: 'catalina.liste+admin@qubikcommerce.com',
-  password: 'Pruebatest1!',
-};
+import { ENV } from './config/constants';
 
 test.describe('Backoffice - Claims List', { tag: ['@claims', '@backoffice'] }, () => {
   test.beforeEach(async ({ page }) => {
     const loginPage = new BackofficeLoginPage(page);
     const claimsListPage = new ClaimsListPage(page);
     await loginPage.goto();
-    await loginPage.login(TEST_USER.email, TEST_USER.password);
-    await expect(page).toHaveURL(/.*backoffice\/home/, { timeout: 30000 });
+    await loginPage.login(ENV.BO_USERNAME, ENV.BO_PASSWORD);
+    await expect(page).toHaveURL(/.*backoffice\/home/);
     await claimsListPage.goto();
   });
 

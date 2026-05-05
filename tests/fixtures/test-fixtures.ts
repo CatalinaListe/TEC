@@ -9,9 +9,10 @@ import { ClaimTrackingPage } from '../pages/frontend/ClaimTrackingPage';
 import { PersonalDataPage } from '../pages/frontend/PersonalDataPage';
 import { StaticPagesPage } from '../pages/frontend/StaticPagesPage';
 import { BackofficeMessagesPage } from '../pages/backoffice/BackofficeMessagesPage';
+import { ENV } from '../config/constants';
 
-const boUsername = process.env.BO_USERNAME || 'catalina.liste+admin@qubikcommerce.com';
-const boPassword = process.env.BO_PASSWORD || 'Pruebatest1!';
+const boUsername = ENV.BO_USERNAME;
+const boPassword = ENV.BO_PASSWORD;
 
 export interface TestFixtures {
   homePage: HomePage;

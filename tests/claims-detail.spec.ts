@@ -1,19 +1,15 @@
 import { test, expect } from './fixtures/test-fixtures';
 import { BackofficeLoginPage } from './pages/backoffice/BackofficeLoginPage';
 import { ClaimDetailPage } from './pages/backoffice/ClaimDetailPage';
-
-const TEST_USER = {
-  email: 'catalina.liste+admin@qubikcommerce.com',
-  password: 'Pruebatest1!',
-};
+import { ENV } from './config/constants';
 
 test.describe('Backoffice - Claim Detail', { tag: ['@claims', '@backoffice'] }, () => {
   test.beforeEach(async ({ page }) => {
     const loginPage = new BackofficeLoginPage(page);
     const detailPage = new ClaimDetailPage(page);
     await loginPage.goto();
-    await loginPage.login(TEST_USER.email, TEST_USER.password);
-    await expect(page).toHaveURL(/.*backoffice\/home/, { timeout: 30000 });
+    await loginPage.login(ENV.BO_USERNAME, ENV.BO_PASSWORD);
+    await expect(page).toHaveURL(/.*backoffice\/home/);
     await detailPage.goto();
     await detailPage.clickFirstClaim();
   });
@@ -53,8 +49,8 @@ test.describe('Backoffice - Claim Tabs', { tag: ['@claims', '@backoffice'] }, ()
     const loginPage = new BackofficeLoginPage(page);
     const detailPage = new ClaimDetailPage(page);
     await loginPage.goto();
-    await loginPage.login(TEST_USER.email, TEST_USER.password);
-    await expect(page).toHaveURL(/.*backoffice\/home/, { timeout: 30000 });
+    await loginPage.login(ENV.BO_USERNAME, ENV.BO_PASSWORD);
+    await expect(page).toHaveURL(/.*backoffice\/home/);
     await detailPage.goto();
     await detailPage.clickFirstClaim();
   });
@@ -69,7 +65,6 @@ test.describe('Backoffice - Claim Tabs', { tag: ['@claims', '@backoffice'] }, ()
     const detailPage = new ClaimDetailPage(page);
     await detailPage.clickTab('notas');
     await detailPage.expectTabSelected('notas');
-    // Verify the notes tab content is visible
     await expect(page.getByText('Notas internas')).toBeVisible({ timeout: 5000 }).catch(() => {});
   });
 
@@ -77,7 +72,6 @@ test.describe('Backoffice - Claim Tabs', { tag: ['@claims', '@backoffice'] }, ()
     const detailPage = new ClaimDetailPage(page);
     await detailPage.clickTab('mensajes');
     await detailPage.expectTabSelected('mensajes');
-    // Verify the chat/messages tab content is visible
     await expect(page.getByText('Enviar')).toBeVisible({ timeout: 5000 }).catch(() => {});
   });
 
@@ -85,7 +79,6 @@ test.describe('Backoffice - Claim Tabs', { tag: ['@claims', '@backoffice'] }, ()
     const detailPage = new ClaimDetailPage(page);
     await detailPage.clickTab('archivos');
     await detailPage.expectTabSelected('archivos');
-    // Verify the files tab content is visible (shows "coming soon" message)
     await expect(page.getByText(/próximamente|coming soon/i)).toBeVisible({ timeout: 5000 }).catch(() => {});
   });
 
@@ -93,7 +86,6 @@ test.describe('Backoffice - Claim Tabs', { tag: ['@claims', '@backoffice'] }, ()
     const detailPage = new ClaimDetailPage(page);
     await detailPage.clickTab('historial');
     await detailPage.expectTabSelected('historial');
-    // Verify the history tab content is visible (shows "coming soon" message)
     await expect(page.getByText(/próximamente|coming soon/i)).toBeVisible({ timeout: 5000 }).catch(() => {});
   });
 });
@@ -103,8 +95,8 @@ test.describe('Backoffice - Tab Notas', { tag: ['@claims', '@backoffice'] }, () 
     const loginPage = new BackofficeLoginPage(page);
     const detailPage = new ClaimDetailPage(page);
     await loginPage.goto();
-    await loginPage.login(TEST_USER.email, TEST_USER.password);
-    await expect(page).toHaveURL(/.*backoffice\/home/, { timeout: 30000 });
+    await loginPage.login(ENV.BO_USERNAME, ENV.BO_PASSWORD);
+    await expect(page).toHaveURL(/.*backoffice\/home/);
     await detailPage.goto();
     await detailPage.clickFirstClaim();
     await detailPage.clickTab('notas');
@@ -112,13 +104,11 @@ test.describe('Backoffice - Tab Notas', { tag: ['@claims', '@backoffice'] }, () 
 
   test('BO-NOTA-001 - Numero de reclamo visible en Notas', async ({ page }) => {
     const detailPage = new ClaimDetailPage(page);
-    // Claim number is in the header, visible from any tab
     await expect(detailPage.claimNumberHeading).toBeVisible({ timeout: 10000 });
   });
 
   test('BO-NOTA-002 - Staff asignado visible', async ({ page }) => {
     const detailPage = new ClaimDetailPage(page);
-    // Staff info is in the details tab
     await detailPage.clickTab('detalles');
     await expect(detailPage.staffButton).toBeVisible({ timeout: 8000 });
   });
@@ -143,7 +133,6 @@ test.describe('Backoffice - Tab Notas', { tag: ['@claims', '@backoffice'] }, () 
 
   test('BO-NOTA-006 - Boton de formato Normal visible', async ({ page }) => {
     const detailPage = new ClaimDetailPage(page);
-    // The Normal button is in the rich text editor toolbar
     await expect(detailPage.normalFormatButton).toBeVisible({ timeout: 8000 });
   });
 });
@@ -153,31 +142,26 @@ test.describe('Backoffice - Tab Mensajes', { tag: ['@claims', '@backoffice'] }, 
     const loginPage = new BackofficeLoginPage(page);
     const detailPage = new ClaimDetailPage(page);
     await loginPage.goto();
-    await loginPage.login(TEST_USER.email, TEST_USER.password);
-    await expect(page).toHaveURL(/.*backoffice\/home/, { timeout: 30000 });
+    await loginPage.login(ENV.BO_USERNAME, ENV.BO_PASSWORD);
+    await expect(page).toHaveURL(/.*backoffice\/home/);
     await detailPage.gotoClaim('1285');
     await detailPage.clickTab('mensajes');
   });
 
   test('BO-MSG-001 - Heading numero de reclamo visible', async ({ page }) => {
     const detailPage = new ClaimDetailPage(page);
-    // Claim number is in the header, visible from any tab
     await expect(detailPage.claimNumberHeading).toBeVisible({ timeout: 10000 });
   });
 
   test('BO-MSG-002 - Staff asignado visible en Mensajes', async ({ page }) => {
     const detailPage = new ClaimDetailPage(page);
-    // Staff info is in the details tab, not messages tab
-    // Check if we can see the team info by going to details tab
     await detailPage.clickTab('detalles');
     await expect(detailPage.staffButton).toBeVisible({ timeout: 8000 });
   });
 
   test('BO-MSG-003 - Contenido editable para escribir mensaje', async ({ page }) => {
     const detailPage = new ClaimDetailPage(page);
-    // Check that the message input is visible
     await expect(detailPage.editableContent).toBeVisible({ timeout: 10000 });
-    // Check that send button is visible
     await expect(detailPage.enviarButton).toBeVisible({ timeout: 10000 });
   });
 });
@@ -187,8 +171,8 @@ test.describe('Backoffice - Tab Archivos', { tag: ['@claims', '@backoffice'] }, 
     const loginPage = new BackofficeLoginPage(page);
     const detailPage = new ClaimDetailPage(page);
     await loginPage.goto();
-    await loginPage.login(TEST_USER.email, TEST_USER.password);
-    await expect(page).toHaveURL(/.*backoffice\/home/, { timeout: 30000 });
+    await loginPage.login(ENV.BO_USERNAME, ENV.BO_PASSWORD);
+    await expect(page).toHaveURL(/.*backoffice\/home/);
     await detailPage.goto();
     await detailPage.clickFirstClaim();
     await detailPage.clickTab('archivos');
@@ -210,8 +194,8 @@ test.describe('Backoffice - Tab Historial', { tag: ['@claims', '@backoffice'] },
     const loginPage = new BackofficeLoginPage(page);
     const detailPage = new ClaimDetailPage(page);
     await loginPage.goto();
-    await loginPage.login(TEST_USER.email, TEST_USER.password);
-    await expect(page).toHaveURL(/.*backoffice\/home/, { timeout: 30000 });
+    await loginPage.login(ENV.BO_USERNAME, ENV.BO_PASSWORD);
+    await expect(page).toHaveURL(/.*backoffice\/home/);
   });
 
   test('BO-HIST-001 - Historial carga correctamente', async ({ page }) => {
@@ -219,7 +203,6 @@ test.describe('Backoffice - Tab Historial', { tag: ['@claims', '@backoffice'] },
     await detailPage.gotoClaim('1308');
     await detailPage.clickTab('historial');
     await detailPage.expectTabSelected('historial');
-    // Verify the history tab content is visible (shows "coming soon" message or actual content)
     const historyContent = page.getByText(/próximamente|coming soon|historial/i);
     await expect(historyContent.first()).toBeVisible({ timeout: 10000 });
   });
@@ -228,12 +211,9 @@ test.describe('Backoffice - Tab Historial', { tag: ['@claims', '@backoffice'] },
     const detailPage = new ClaimDetailPage(page);
     await detailPage.gotoClaim('1308');
     await detailPage.clickTab('historial');
-    // The history section may show "coming soon", so we use a more flexible check
     try {
       await expect(detailPage.datePattern.first()).toBeVisible({ timeout: 5000 });
     } catch {
-      // If dates are not visible, the history feature might not be fully implemented
-      // Check if "coming soon" message is shown instead
       await expect(page.getByText(/próximamente|coming soon/i).first()).toBeVisible({ timeout: 5000 });
     }
   });
@@ -242,11 +222,9 @@ test.describe('Backoffice - Tab Historial', { tag: ['@claims', '@backoffice'] },
     const detailPage = new ClaimDetailPage(page);
     await detailPage.gotoClaim('1308');
     await detailPage.clickTab('historial');
-    // The history section may show "coming soon", so we use a more flexible check
     try {
       await expect(detailPage.statusChangeText.first()).toBeVisible({ timeout: 5000 });
     } catch {
-      // If status changes are not visible, the history feature might not be fully implemented
       await expect(page.getByText(/próximamente|coming soon/i).first()).toBeVisible({ timeout: 5000 });
     }
   });
@@ -256,8 +234,6 @@ test.describe('Backoffice - Tab Historial', { tag: ['@claims', '@backoffice'] },
     await detailPage.gotoClaim('1308');
     await detailPage.clickTab('historial');
     const count = await detailPage.getStatusChangeCount();
-    // If history is not implemented yet (shows "coming soon"), this will be 0
-    // In that case, just verify the tab loaded correctly
     if (count === 0) {
       await expect(detailPage.historialTab).toBeVisible();
     } else {
@@ -276,7 +252,6 @@ test.describe('Backoffice - Tab Historial', { tag: ['@claims', '@backoffice'] },
     const detailPage = new ClaimDetailPage(page);
     await detailPage.gotoClaim('1');
     await detailPage.clickTab('historial');
-    // Check for either empty state message or "coming soon" message
     const emptyMessage = page.getByText(/Aún no hay movimientos|próximamente|coming soon/i);
     await expect(emptyMessage.first()).toBeVisible({ timeout: 10000 });
   });

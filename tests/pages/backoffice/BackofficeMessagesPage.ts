@@ -1,4 +1,5 @@
 import { Page, Locator, expect } from "@playwright/test";
+import { URLS } from "../../config/constants";
 
 export class BackofficeMessagesPage {
   readonly page: Page;
@@ -71,7 +72,7 @@ export class BackofficeMessagesPage {
   }
 
   async goto(): Promise<void> {
-    await this.page.goto('/backoffice/messages');
+    await this.page.goto(URLS.BACKOFFICE_MESSAGES);
     await this.page.waitForLoadState('domcontentloaded', { timeout: 15000 }).catch(() => {});
     // Wait for the page to be fully loaded with messages
     await this.messageItems.first().waitFor({ state: 'visible', timeout: 30000 }).catch(() => {});

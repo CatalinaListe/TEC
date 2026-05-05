@@ -1,4 +1,5 @@
 import { Page, Locator, expect } from "@playwright/test";
+import { URLS } from "../../config/constants";
 
 export class BackofficeLoginPage {
   readonly page: Page;
@@ -24,7 +25,7 @@ export class BackofficeLoginPage {
   }
 
   async goto() {
-    await this.page.goto("/backoffice/login");
+    await this.page.goto(URLS.BACKOFFICE_LOGIN);
   }
 
   async login(email: string, password: string) {

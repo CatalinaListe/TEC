@@ -5,14 +5,10 @@ import { ClaimDetailPage } from './pages/backoffice/ClaimDetailPage';
 import * as path from 'path';
 import * as fs from 'fs';
 import { fileURLToPath } from 'url';
+import { ENV } from './config/constants';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
-const TEST_USER = {
-  email: 'catalina.liste+admin@qubikcommerce.com',
-  password: 'Pruebatest1!',
-};
 
 test.describe('Backoffice - Upload File from Messages', { tag: ['@messages', '@files', '@backoffice'] }, () => {
   let messagesPage: BackofficeMessagesPage;
@@ -69,7 +65,7 @@ startxref
     messagesPage = new BackofficeMessagesPage(page);
     detailPage = new ClaimDetailPage(page);
     await loginPage.goto();
-    await loginPage.login(TEST_USER.email, TEST_USER.password);
+    await loginPage.login(ENV.BO_USERNAME, ENV.BO_PASSWORD);
     await expect(page).toHaveURL(/.*backoffice\/home/, { timeout: 30000 });
   });
 

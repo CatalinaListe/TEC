@@ -1,4 +1,5 @@
 import { Page, Locator, expect } from "@playwright/test";
+import { URLS } from "../../config/constants";
 
 export class PersonalDataPage {
   readonly page: Page;
@@ -71,7 +72,7 @@ export class PersonalDataPage {
 
   // Tracking methods
   async gotoTracking(): Promise<void> {
-    await this.page.goto('/mis-reclamos/ingresar');
+    await this.page.goto(URLS.FRONTEND_SEARCH);
     await expect(this.page).toHaveURL(/.*mis-reclamos\/ingresar/);
   }
 
@@ -97,7 +98,7 @@ export class PersonalDataPage {
 
   // Personal data step 1 methods
   async gotoDatosPaso1(): Promise<void> {
-    await this.page.goto('/datos-personales/paso-1');
+    await this.page.goto(URLS.FRONTEND_DATOS_PASO1);
     await expect(this.page).toHaveURL(/.*datos-personales\/paso-1/);
   }
 
@@ -140,7 +141,7 @@ export class PersonalDataPage {
 
   // Personal data step 2 methods
   async gotoDatosPaso2(): Promise<void> {
-    await this.page.goto('/datos-personales/paso-2');
+    await this.page.goto(URLS.FRONTEND_DATOS_PASO2);
     await expect(this.page).toHaveURL(/.*datos-personales\/paso-2/);
   }
 
@@ -155,7 +156,7 @@ export class PersonalDataPage {
 
   // Problem description methods
   async gotoProblemaPaso1(): Promise<void> {
-    await this.page.goto('/contanos-tu-problema/paso-1');
+    await this.page.goto(URLS.FRONTEND_CONTANOS_PASO1);
     await expect(this.page).toHaveURL(/.*contanos-tu-problema\/paso-1/);
   }
 
@@ -171,7 +172,7 @@ export class PersonalDataPage {
 
   // Confirmation methods
   async gotoConfirmation(): Promise<void> {
-    await this.page.goto('/confirmation');
+    await this.page.goto(URLS.FRONTEND_HOME + '/confirmation');
     await expect(this.page).toHaveURL(/.*confirmation/);
   }
 

@@ -1,4 +1,5 @@
 import { Page, Locator, expect } from "@playwright/test";
+import { URLS } from "../../config/constants";
 
 export class StaticPagesPage {
   readonly page: Page;
@@ -41,33 +42,33 @@ export class StaticPagesPage {
   }
 
   async gotoNosotros(): Promise<void> {
-    await this.page.goto('/nosotros');
+    await this.page.goto(URLS.STATIC_NOSOTROS);
     await expect(this.page).toHaveURL(/.*nosotros/);
   }
 
   async gotoVuelos(): Promise<void> {
-    await this.page.goto('/vuelos');
+    await this.page.goto(URLS.STATIC_VUELOS);
     // The page might redirect, so wait for any page load
     await this.page.waitForLoadState('domcontentloaded', { timeout: 10000 }).catch(() => {});
   }
 
   async gotoPoliticasPrivacidad(): Promise<void> {
-    await this.page.goto('/politicas-de-privacidad');
+    await this.page.goto(URLS.STATIC_PRIVACY);
     await expect(this.page).toHaveURL(/.*politicas-de-privacidad/);
   }
 
   async gotoTerminosCondiciones(): Promise<void> {
-    await this.page.goto('/terminos-y-condiciones');
+    await this.page.goto(URLS.STATIC_TERMS);
     await expect(this.page).toHaveURL(/.*terminos-y-condiciones/);
   }
 
   async gotoNuestrosServicios(): Promise<void> {
-    await this.page.goto('/nuestros-servicios');
+    await this.page.goto(URLS.STATIC_SERVICES);
     await expect(this.page).toHaveURL(/.*nuestros-servicios/);
   }
 
   async gotoPreguntasFrecuentes(): Promise<void> {
-    await this.page.goto('/preguntas-frecuentes');
+    await this.page.goto(URLS.STATIC_FAQ);
     await expect(this.page).toHaveURL(/.*preguntas-frecuentes/);
   }
 
@@ -79,7 +80,7 @@ export class StaticPagesPage {
   }
 
   async gotoContacto(): Promise<void> {
-    await this.page.goto('/contacto');
+    await this.page.goto(URLS.STATIC_CONTACT);
     // Wait for page to load - don't assert form visibility immediately
     await this.page.waitForLoadState('domcontentloaded', { timeout: 10000 }).catch(() => {});
     await this.page.waitForTimeout(2000);
@@ -114,7 +115,11 @@ export class StaticPagesPage {
   }
 
   async gotoDatosPaso1(): Promise<void> {
-    await this.page.goto('/datos-personales/paso-1');
+    await this.page.goto(URLS.FRONTEND_DATOS_PASO1);
+  }
+
+  async gotoContanosProblemaPaso1(): Promise<void> {
+    await this.page.goto(URLS.FRONTEND_CONTANOS_PASO1);
   }
 
   async expectContinuarDisabled(): Promise<void> {
@@ -127,10 +132,6 @@ export class StaticPagesPage {
 
   async expectTelefonoError(): Promise<void> {
     await expect(this.page.getByText(/número|formato/i)).toBeVisible();
-  }
-
-  async gotoContanosProblemaPaso1(): Promise<void> {
-    await this.page.goto('/contanos-tu-problema/paso-1');
   }
 
   async fillNegativeMonto(): Promise<void> {
@@ -150,6 +151,6 @@ export class StaticPagesPage {
   }
 
   async gotoHomepage(): Promise<void> {
-    await this.page.goto('/');
+    await this.page.goto(URLS.FRONTEND_HOME);
   }
 }

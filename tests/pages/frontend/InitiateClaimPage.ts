@@ -1,6 +1,5 @@
 import { Page, Locator, expect } from "@playwright/test";
-
-const BASE_URL = "https://front.dev-tecorresponde.k8s.qubikcommerce.com";
+import { URLS } from "../../config/constants";
 
 export class IniciarReclamoAerolineasPage {
   private readonly _page: Page;
@@ -14,7 +13,7 @@ export class IniciarReclamoAerolineasPage {
   }
 
   get baseUrl(): string {
-    return BASE_URL;
+    return URLS.BASE;
   }
 
   get selectTipoReclamo(): Locator {
@@ -153,12 +152,12 @@ export class IniciarReclamoAerolineasPage {
   }
 
   async goto(): Promise<void> {
-    await this.page.goto(`${BASE_URL}/iniciar-reclamo/paso-0`);
+    await this.page.goto(URLS.FRONTEND_CLAIM_PASO0);
     await this.page.waitForTimeout(3000);
   }
 
   async gotoPaso1(): Promise<void> {
-    await this.page.goto(`${BASE_URL}/vuelos/paso-1`);
+    await this.page.goto(URLS.FRONTEND_VUELOS_PASO1);
     await this.page.waitForTimeout(3000);
   }
 
@@ -435,5 +434,3 @@ export class IniciarReclamoAerolineasPage {
     await expect(this.page.getByText("¡Muchas gracias por tu reclamo!")).toBeVisible();
   }
 }
-
-export { BASE_URL };

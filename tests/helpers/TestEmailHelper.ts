@@ -1,4 +1,5 @@
 import { Page, Locator, expect } from "@playwright/test";
+import { URLS, ENV } from "../config/constants";
 
 /**
  * Helper for handling email and OTP in tests without relying on external services like temp-mail.io
@@ -44,7 +45,7 @@ export class TestEmailHelper {
     // If this endpoint doesn't exist, we'll need to add it to the backend
     
     const startTime = Date.now();
-    const apiBaseUrl = process.env.API_BASE_URL || 'https://api.dev-tecorresponde.k8s.qubikcommerce.com';
+    const apiBaseUrl = URLS.BASE;
     
     while (Date.now() - startTime < timeout) {
       try {
@@ -59,30 +60,31 @@ export class TestEmailHelper {
             return data.otp;
           }
         }
-      } catch (e) {
-        // Endpoint might not exist yet, continue polling
+      } catch (error) {
+        // Ignore errors and retry
       }
       
-      // Wait before next attempt
+      // Wait before retrying
       await this.page.waitForTimeout(2000);
     }
     
-    throw new Error(`Timeout waiting for OTP for email: ${email}. Consider adding a test endpoint to retrieve OTP codes.`);
+    throw new Error(`Timeout waiting for OTP for email: ${email}`);
   }
 
   /**
-   * Alternative approach: Use a fixed OTP for testing
-   * This requires backend changes to accept a fixed OTP in test environments
+   * Fills the email field and requests OTP
    */
-  static getFixedOTP(): string {
-    return '123456';
+  async fillEmailAndRequestOTP(email: string): Promise<void> {
+    // Implementation depends on the specific page
+    // This is a generic helper that should be overridden or adapted
+    throw new Error("fillEmailAndRequestOTP must be implemented for specific page");
   }
 
   /**
-   * Fills the OTP input field
+   * Fills the OTP code received via email
    */
   async fillOTP(otp: string): Promise<void> {
-    const otpInput = this.page.getByRole("textbox");
-    await otpInput.fill(otp);
+    // Implementation depends on the specific page
+    throw new Error("fillOTP must be implemented for specific page");
   }
 }

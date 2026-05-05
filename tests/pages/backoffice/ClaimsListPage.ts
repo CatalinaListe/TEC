@@ -1,4 +1,5 @@
 import { Page, Locator, expect } from "@playwright/test";
+import { URLS } from "../../config/constants";
 
 export class ClaimsListPage {
   readonly page: Page;
@@ -30,8 +31,8 @@ export class ClaimsListPage {
   }
 
   async goto(): Promise<void> {
-    await this.page.goto('/backoffice/claims');
-    await this.page.waitForTimeout(2000);
+    await this.page.goto(URLS.BACKOFFICE_CLAIMS);
+    await this.page.waitForLoadState('domcontentloaded', { timeout: 30000 }).catch(() => {});
   }
 
   async expectListLoaded(): Promise<void> {

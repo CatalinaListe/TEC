@@ -1,11 +1,7 @@
 import { test, expect } from "./fixtures/test-fixtures";
 import { BackofficeLoginPage } from "./pages/backoffice/BackofficeLoginPage";
 import { BackofficeMessagesPage } from "./pages/backoffice/BackofficeMessagesPage";
-
-const TEST_USER = {
-  email: "catalina.liste+admin@qubikcommerce.com",
-  password: "Pruebatest1!",
-};
+import { ENV } from "./config/constants";
 
 test.describe(
   "Backoffice - Messages",
@@ -17,7 +13,7 @@ test.describe(
       const loginPage = new BackofficeLoginPage(page);
       messagesPage = new BackofficeMessagesPage(page);
       await loginPage.goto();
-      await loginPage.login(TEST_USER.email, TEST_USER.password);
+      await loginPage.login(ENV.BO_USERNAME, ENV.BO_PASSWORD);
       await expect(page).toHaveURL(/.*backoffice\/home/, { timeout: 30000 });
       await messagesPage.goto();
       await messagesPage.expectPageLoaded();
@@ -69,7 +65,6 @@ test.describe(
       });
       // Get count of message items
       const count = await messagesPage.messageItems.count();
-      console.log(`Found ${count} message items`);
       expect(count).toBeGreaterThan(0);
       // Click first message
       await messagesPage.clickFirstMessage();

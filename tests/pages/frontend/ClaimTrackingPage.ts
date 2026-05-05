@@ -1,4 +1,5 @@
 import { Page, Locator, expect } from "@playwright/test";
+import { URLS } from "../../config/constants";
 
 export class ClaimTrackingPage {
   readonly page: Page;
@@ -55,12 +56,12 @@ export class ClaimTrackingPage {
   }
 
   async gotoSearch(): Promise<void> {
-    await this.page.goto('/mis-reclamos/buscar');
+    await this.page.goto(URLS.FRONTEND_SEARCH);
     await this.page.waitForTimeout(3000);
   }
 
   async gotoListado(): Promise<void> {
-    await this.page.goto('/mis-reclamos/listado');
+    await this.page.goto(URLS.FRONTEND_LIST);
     await this.page.waitForTimeout(3000);
   }
 

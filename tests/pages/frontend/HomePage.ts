@@ -1,4 +1,5 @@
 import { Page, Locator, expect } from "@playwright/test";
+import { URLS } from "../../config/constants";
 
 export class HomePage {
   readonly page: Page;
@@ -30,7 +31,7 @@ export class HomePage {
   }
 
   async goto() {
-    await this.page.goto('/');
+    await this.page.goto(URLS.FRONTEND_HOME);
     await this.acceptCookies();
   }
 

@@ -1,11 +1,7 @@
 import { test, expect } from "./fixtures/test-fixtures";
 import { BackofficeLoginPage } from "./pages/backoffice/BackofficeLoginPage";
 import { BackofficeDashboardPage } from "./pages/backoffice/BackofficeDashboardPage";
-
-const TEST_USER = {
-  email: "catalina.liste+admin@qubikcommerce.com",
-  password: "Pruebatest1!",
-};
+import { ENV } from "./config/constants";
 
 test.describe(
   "Backoffice - Dashboard",
@@ -15,8 +11,8 @@ test.describe(
       const loginPage = new BackofficeLoginPage(page);
       const dashboardPage = new BackofficeDashboardPage(page);
       await loginPage.goto();
-      await loginPage.login(TEST_USER.email, TEST_USER.password);
-      await expect(page).toHaveURL(/.*backoffice\/home/, { timeout: 30000 });
+      await loginPage.login(ENV.BO_USERNAME, ENV.BO_PASSWORD);
+      await expect(page).toHaveURL(/.*backoffice\/home/);
       await dashboardPage.goto();
     });
 
@@ -98,6 +94,14 @@ test.describe(
       const dashboardPage = new BackofficeDashboardPage(page);
       await dashboardPage.clickVerTodoMensajes();
       await dashboardPage.expectMensajesVisible();
+    });
+
+    test("BO-DASH-014 - Boton lapiz en Mis Datos redirige a Mi Cuenta", async ({
+      page,
+    }) => {
+      const dashboardPage = new BackofficeDashboardPage(page);
+      await dashboardPage.clickEditMyData();
+      await expect(page).toHaveURL(/.*backoffice\/my-account/);
     });
   },
 );

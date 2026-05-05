@@ -1,4 +1,5 @@
 import { Page, Locator, expect } from "@playwright/test";
+import { URLS } from "../../config/constants";
 
 export class ClaimDetailPage {
   readonly page: Page;
@@ -73,8 +74,7 @@ export class ClaimDetailPage {
   }
 
   async goto(): Promise<void> {
-    await this.page.goto('/backoffice/claims');
-    await this.page.waitForLoadState('networkidle').catch(() => {});
+    await this.page.goto(URLS.BACKOFFICE_CLAIMS);
     await this.page.waitForTimeout(2000);
   }
 
@@ -89,7 +89,7 @@ export class ClaimDetailPage {
   }
 
   async gotoClaim(claimId: string): Promise<void> {
-    await this.page.goto(`/backoffice/claims/${claimId}`);
+    await this.page.goto(`${URLS.BACKOFFICE_CLAIMS}/${claimId}`);
     await this.page.waitForLoadState('networkidle').catch(() => {});
     await this.page.waitForTimeout(2000);
   }

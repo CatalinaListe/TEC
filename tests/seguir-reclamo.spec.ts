@@ -1,10 +1,8 @@
 import { test, expect } from "./fixtures/test-fixtures";
-import {
-  IniciarReclamoAerolineasPage,
-  BASE_URL,
-} from "./pages/frontend/InitiateClaimPage";
+import { IniciarReclamoAerolineasPage } from "./pages/frontend/InitiateClaimPage";
 import { TempMailPage } from "./helpers/TempMailHelper";
 import { ClaimTrackingPage } from "./pages/frontend/ClaimTrackingPage";
+import { URLS } from "./config/constants";
 
 test.describe("Seguimiento de reclamo", () => {
   let trackingPage: ClaimTrackingPage;
@@ -37,7 +35,7 @@ test.describe("Seguimiento de reclamo", () => {
 
     await aeroPage.fillCodigoEmail(codigo);
 
-    await expect(page).toHaveURL(`${BASE_URL}/datos-personales/paso-2`);
+    await expect(page).toHaveURL(`${URLS.BASE}/datos-personales/paso-2`);
 
     await aeroPage.completarDatosPersonales();
     await aeroPage.clickContinuar();
