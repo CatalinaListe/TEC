@@ -2,19 +2,15 @@ import { test, expect } from "./fixtures/test-fixtures";
 import { BackofficeLoginPage } from "./pages/backoffice/BackofficeLoginPage";
 import { BackofficeDashboardPage } from "./pages/backoffice/BackofficeDashboardPage";
 import { BackofficeMyAccountPage } from "./pages/backoffice/BackofficeMyAccountPage";
-import { ENV } from "./config/constants";
+import { ENV, TEST_DATA } from "./config/constants";
 
 test.describe(
   "Backoffice - Mi Cuenta",
   { tag: ["@my-account", "@backoffice"] },
   () => {
-    let myAccountPage: BackofficeMyAccountPage;
-    let dashboardPage: BackofficeDashboardPage;
-
     test.beforeEach(async ({ page }) => {
       const loginPage = new BackofficeLoginPage(page);
-      dashboardPage = new BackofficeDashboardPage(page);
-      myAccountPage = new BackofficeMyAccountPage(page);
+      const dashboardPage = new BackofficeDashboardPage(page);
 
       await loginPage.goto();
       await loginPage.login(ENV.BO_USERNAME, ENV.BO_PASSWORD);
@@ -23,32 +19,27 @@ test.describe(
       await dashboardPage.goto();
       await dashboardPage.clickEditMyData();
       await expect(page).toHaveURL(/.*backoffice\/my-account/);
-      await myAccountPage.expectPageLoaded();
-
-      // Ensure we're in read mode before tests
-      await myAccountPage.ensureReadMode();
     });
 
-    test.afterEach(async () => {
-      // Ensure we're back in read mode after each test
-      await myAccountPage.ensureReadMode();
-    });
 
     test("BO-ACCT-001 - Página Mi Cuenta carga correctamente", async ({ page }) => {
+      const myAccountPage = new BackofficeMyAccountPage(page);
       await myAccountPage.expectPageLoaded();
     });
 
     test("BO-ACCT-002 - Activar modo edición con botón lápiz", async ({ page }) => {
+      const myAccountPage = new BackofficeMyAccountPage(page);
       await myAccountPage.clickEditButton();
       const inEditMode = await myAccountPage.isInEditMode();
       expect(inEditMode).toBe(true);
     });
 
     test("BO-ACCT-003 - Cancelar edición restaura datos originales", async ({ page }) => {
+      const myAccountPage = new BackofficeMyAccountPage(page);
       await myAccountPage.clickEditButton();
 
       // Modify a field
-      await myAccountPage.fillName("TestModified");
+      await myAccountPage.fillName(TEST_DATA.MODIFIED_NAME);
       await myAccountPage.clickCancelButton();
 
       // Verify we're out of edit mode
@@ -57,67 +48,40 @@ test.describe(
     });
 
     test("BO-ACCT-004 - Editar nombre y guardar", async ({ page }) => {
-      await myAccountPage.clickEditButton();
-      await myAccountPage.fillName("Catalina Modified");
-      await myAccountPage.clickSaveButton();
+      const myAccountPage = new BackofficeMyAccountPage(page);
+      await myAccountPage.editNameAndSave(TEST_DATA.MODIFIED_NAME);
       await myAccountPage.expectSuccessMessage();
     });
 
     test("BO-ACCT-005 - Editar apellido y guardar", async ({ page }) => {
-      await myAccountPage.clickEditButton();
-      await myAccountPage.fillSurname("Liste Modified");
-      await myAccountPage.clickSaveButton();
+      const myAccountPage = new BackofficeMyAccountPage(page);
+      await myAccountPage.editSurnameAndSave(TEST_DATA.MODIFIED_SURNAME);
       await myAccountPage.expectSuccessMessage();
     });
 
     test("BO-ACCT-006 - Editar número de documento y guardar", async ({ page }) => {
-      await myAccountPage.clickEditButton();
-      await myAccountPage.fillDocumentNumber("98765432");
-      await myAccountPage.clickSaveButton();
+      const myAccountPage = new BackofficeMyAccountPage(page);
+      await myAccountPage.editDocumentAndSave(TEST_DATA.MODIFIED_DOCUMENT);
       await myAccountPage.expectSuccessMessage();
     });
 
     test("BO-ACCT-008 - Editar teléfono si está habilitado", async ({ page }) => {
-      await myAccountPage.clickEditButton();
-
-      const isPhoneDisabled = await myAccountPage.phoneInput.isDisabled();
-      if (!isPhoneDisabled) {
-        await myAccountPage.fillPhoneNumber("1199999999");
-        await myAccountPage.clickSaveButton();
-        await myAccountPage.expectSuccessMessage();
-      }
+      const myAccountPage = new BackofficeMyAccountPage(page);
+      await myAccountPage.editPhoneIfEnabled(TEST_DATA.MODIFIED_PHONE);
+      await myAccountPage.expectSuccessMessage();
     });
 
     test("BO-ACCT-009 - Edición completa de datos personales", async ({ page }) => {
-      await myAccountPage.clickEditButton();
-      await myAccountPage.fillName("Catalina");
-      await myAccountPage.fillSurname("Liste");
-      await myAccountPage.fillDocumentNumber("12345678");
-      await myAccountPage.clickSaveButton();
+      const myAccountPage = new BackofficeMyAccountPage(page);
+      await myAccountPage.editAllPersonalData(TEST_DATA.ORIGINAL_NAME, TEST_DATA.ORIGINAL_SURNAME, TEST_DATA.DOCUMENT_NUMBER);
       await myAccountPage.expectSuccessMessage();
     });
 
     test("BO-ACCT-010 - Validación de campos requeridos", async ({ page }) => {
-      await myAccountPage.clickEditButton();
-
-      // Wait for edit mode
-      await page.waitForTimeout(1000);
-
-      // Clear name field and trigger validation
-      await myAccountPage.nameInput.click();
-      await page.keyboard.press('Control+A');
-      await page.keyboard.press('Backspace');
-      await myAccountPage.nameInput.blur();
-
-      // Clear surname field and trigger validation
-      await myAccountPage.surnameInput.click();
-      await page.keyboard.press('Control+A');
-      await page.keyboard.press('Backspace');
-      await myAccountPage.surnameInput.blur();
-
-      // Look for validation error messages - try different selectors
-      const errorVisible = await page.locator('text=/requerido|required|ingresá|obligatorio/i').first().isVisible();
-      expect(errorVisible).toBe(true);
+      const myAccountPage = new BackofficeMyAccountPage(page);
+      await myAccountPage.triggerRequiredFieldValidation();
+      const hasErrors = await myAccountPage.hasValidationErrors();
+      expect(hasErrors).toBe(true);
     });
   }
 );

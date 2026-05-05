@@ -151,6 +151,78 @@ export class BackofficeMyAccountPage {
     await this.page.waitForTimeout(TIMEOUTS.MEDIUM);
   }
 
+  async editNameAndSave(name: string): Promise<void> {
+    await this.clickEditButton();
+    await this.fillName(name);
+    await this.clickSaveButton();
+  }
+
+  async editSurnameAndSave(surname: string): Promise<void> {
+    await this.clickEditButton();
+    await this.fillSurname(surname);
+    await this.clickSaveButton();
+  }
+
+  async editDocumentAndSave(document: string): Promise<void> {
+    await this.clickEditButton();
+    await this.fillDocumentNumber(document);
+    await this.clickSaveButton();
+  }
+
+  async editEmailIfEnabled(email: string): Promise<void> {
+    await this.clickEditButton();
+    const isEmailDisabled = await this.emailInput.isDisabled();
+    if (!isEmailDisabled) {
+      await this.fillEmail(email);
+      await this.clickSaveButton();
+    }
+  }
+
+  async editPhoneIfEnabled(phone: string): Promise<void> {
+    await this.clickEditButton();
+    const isPhoneDisabled = await this.phoneInput.isDisabled();
+    if (!isPhoneDisabled) {
+      await this.fillPhoneNumber(phone);
+      await this.clickSaveButton();
+    }
+  }
+
+  async editAllPersonalData(name: string, surname: string, document: string): Promise<void> {
+    await this.clickEditButton();
+    await this.fillName(name);
+    await this.fillSurname(surname);
+    await this.fillDocumentNumber(document);
+    await this.clickSaveButton();
+  }
+
+  async triggerRequiredFieldValidation(): Promise<void> {
+    await this.clickEditButton();
+    await this.page.waitForTimeout(1000);
+
+    // Clear name field
+    await this.nameInput.click();
+    await this.page.keyboard.press('Control+A');
+    await this.page.keyboard.press('Backspace');
+    await this.nameInput.blur();
+
+    // Clear surname field
+    await this.surnameInput.click();
+    await this.page.keyboard.press('Control+A');
+    await this.page.keyboard.press('Backspace');
+    await this.surnameInput.blur();
+
+    await this.page.waitForTimeout(1000);
+
+    // Click save to trigger validation display
+    //await this.saveButton.click();
+    await this.page.waitForTimeout(2000);
+  }
+
+  async hasValidationErrors(): Promise<boolean> {
+    const errorVisible = await this.page.locator('text=/requerido|required|ingresá|obligatorio/i').first().isVisible();
+    return errorVisible;
+  }
+
   async clickCancelButton(): Promise<void> {
     await this.cancelButton.click({ force: true });
     await this.page.waitForTimeout(TIMEOUTS.SHORT);

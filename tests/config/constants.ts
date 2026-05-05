@@ -168,4 +168,13 @@ export const TEST_DATA = {
   OWNER_NAME: "Juan Perez",
   COMPANY_NAME: "ADUSSA",
   SHORT_COMPANY: "AD",
+
+  // My Account test data
+  MODIFIED_NAME: "Catalina Modified",
+  MODIFIED_SURNAME: "Liste Modified",
+  MODIFIED_DOCUMENT: "98765432",
+  MODIFIED_EMAIL: "modified.email@example.com",
+  MODIFIED_PHONE: "1199999999",
+  ORIGINAL_NAME: "Catalina",
+  ORIGINAL_SURNAME: "Liste",
 } as const;
