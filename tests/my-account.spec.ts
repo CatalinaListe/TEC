@@ -2,7 +2,7 @@ import { test, expect } from "./fixtures/test-fixtures";
 import { BackofficeLoginPage } from "./pages/backoffice/BackofficeLoginPage";
 import { BackofficeDashboardPage } from "./pages/backoffice/BackofficeDashboardPage";
 import { BackofficeMyAccountPage } from "./pages/backoffice/BackofficeMyAccountPage";
-import { ENV, TEST_DATA } from "./config/constants";
+import { ENV, TEST_DATA, URLS } from "./config/constants";
 
 test.describe(
   "Backoffice - Mi Cuenta",
@@ -82,6 +82,24 @@ test.describe(
       await myAccountPage.triggerRequiredFieldValidation();
       const hasErrors = await myAccountPage.hasValidationErrors();
       expect(hasErrors).toBe(true);
+    });
+
+    test.describe("Cambio de contraseña", () => {
+      const NEW_PASSWORD = "Newpassword123!";
+
+      test.afterEach(async ({ page }) => {
+        // Navigate to my-account page and restore original password
+        await page.goto(URLS.BACKOFFICE_MY_ACCOUNT);
+        const myAccountPage = new BackofficeMyAccountPage(page);
+        await myAccountPage.changePassword(NEW_PASSWORD, ENV.BO_PASSWORD);
+        await myAccountPage.expectSuccessMessage();
+      });
+
+      test("BO-ACCT-011 - Cambiar contraseña exitosamente", async ({ page }) => {
+        const myAccountPage = new BackofficeMyAccountPage(page);
+        await myAccountPage.changePassword(ENV.BO_PASSWORD, NEW_PASSWORD);
+        await myAccountPage.expectSuccessMessage();
+      });
     });
   }
 );

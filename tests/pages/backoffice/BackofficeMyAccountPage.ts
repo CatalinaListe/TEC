@@ -5,6 +5,7 @@ export class BackofficeMyAccountPage {
   readonly page: Page;
   readonly heading: Locator;
   readonly editButton: Locator;
+  readonly passwordEditButton: Locator;
   readonly nameInput: Locator;
   readonly surnameInput: Locator;
   readonly documentNumberInput: Locator;
@@ -12,18 +13,32 @@ export class BackofficeMyAccountPage {
   readonly phoneInput: Locator;
   readonly saveButton: Locator;
   readonly cancelButton: Locator;
+  readonly currentPasswordInput: Locator;
+  readonly newPasswordInput: Locator;
+  readonly confirmPasswordInput: Locator;
 
   constructor(page: Page) {
     this.page = page;
-    this.heading = page.getByRole("heading", { name: /Datos personales|Mi cuenta/i });
+    this.heading = page.getByRole("heading", {
+      name: /Datos personales|Mi cuenta/i,
+    });
 
     // Personal info article - identified by heading text
-    const personalInfoArticle = page.locator('article').filter({
-      has: page.getByText(/Datos personales|Información personal/i, { exact: false })
-    }).first();
+    const personalInfoArticle = page
+      .locator("article")
+      .filter({
+        has: page.getByText(/Datos personales|Información personal/i, {
+          exact: false,
+        }),
+      })
+      .first();
 
     // Edit button = pencil icon (4th button on page)
-    this.editButton = page.getByRole('button').nth(4);
+    this.editButton = page.getByRole("button").nth(4);
+    this.passwordEditButton = page
+      .getByRole("button")
+      .filter({ hasText: /^$/ })
+      .nth(2);
 
     // Inputs by name attribute
     this.nameInput = page.locator('input[name="name"]');
@@ -32,9 +47,18 @@ export class BackofficeMyAccountPage {
     this.emailInput = page.locator('input[name="customerEmail"]');
     this.phoneInput = page.locator('input[name="phoneNumber"]');
 
+    // Password fields
+    this.currentPasswordInput = page.getByRole('textbox', { name: 'Contraseña actual:*' });
+    this.newPasswordInput = page.getByRole('textbox', { name: 'Nueva contraseña:*', exact: true });
+    this.confirmPasswordInput = page.getByRole('textbox', { name: 'Repetir nueva contraseña:*' });
+
     // Save/Cancel buttons (only visible in edit mode)
-    this.saveButton = page.getByRole('button', { name: /guardar|save/i }).first();
-    this.cancelButton = page.getByRole('button', { name: /cancelar|cancel/i }).first();
+    this.saveButton = page
+      .getByRole("button", { name: /guardar|save/i })
+      .first();
+    this.cancelButton = page
+      .getByRole("button", { name: /cancelar|cancel/i })
+      .first();
   }
 
   async goto(): Promise<void> {
@@ -48,17 +72,23 @@ export class BackofficeMyAccountPage {
 
   async clickEditButton(): Promise<void> {
     // In read mode, the pencil button should be visible
-    await this.editButton.waitFor({ state: 'visible', timeout: TIMEOUTS.MEDIUM });
+    await this.editButton.waitFor({
+      state: "visible",
+      timeout: TIMEOUTS.MEDIUM,
+    });
     await this.editButton.click();
 
     // Wait for edit mode - save button becomes visible
-    await this.saveButton.waitFor({ state: 'visible', timeout: TIMEOUTS.MEDIUM });
+    await this.saveButton.waitFor({
+      state: "visible",
+      timeout: TIMEOUTS.MEDIUM,
+    });
     await this.page.waitForTimeout(1500);
   }
 
   async isInEditMode(): Promise<boolean> {
     try {
-      await this.saveButton.waitFor({ state: 'visible', timeout: 3000 });
+      await this.saveButton.waitFor({ state: "visible", timeout: 3000 });
       return true;
     } catch {
       return false;
@@ -75,9 +105,9 @@ export class BackofficeMyAccountPage {
   private async removeReadonly(selector: string): Promise<void> {
     await this.page.evaluate((sel) => {
       const inputs = document.querySelectorAll(sel);
-      inputs.forEach(input => {
-        input.removeAttribute('readonly');
-        input.removeAttribute('aria-readonly');
+      inputs.forEach((input) => {
+        input.removeAttribute("readonly");
+        input.removeAttribute("aria-readonly");
         (input as HTMLInputElement).readOnly = false;
       });
     }, selector);
@@ -127,27 +157,30 @@ export class BackofficeMyAccountPage {
     await this.removeReadonly('input[name="phoneNumber"]');
 
     // Fill required fields
-    await this.nameInput.fill('Catalina');
-    await this.surnameInput.fill('Liste');
-    await this.documentNumberInput.fill('12345678');
+    await this.nameInput.fill("Catalina");
+    await this.surnameInput.fill("Liste");
+    await this.documentNumberInput.fill("12345678");
 
     // Fill phone if enabled
     const isPhoneDisabled = await this.phoneInput.isDisabled();
     if (!isPhoneDisabled) {
-      await this.phoneInput.fill('1191234567');
+      await this.phoneInput.fill("1191234567");
     }
   }
 
   async clickSaveButton(): Promise<void> {
     // Wait for save button to be enabled
-    await this.saveButton.waitFor({ state: 'visible', timeout: TIMEOUTS.MEDIUM });
+    await this.saveButton.waitFor({
+      state: "visible",
+      timeout: TIMEOUTS.MEDIUM,
+    });
     await this.page.waitForTimeout(1000);
 
     // Click save
     await this.saveButton.click();
 
     // Wait for save to complete - back to read mode
-    await this.editButton.waitFor({ state: 'visible', timeout: TIMEOUTS.LONG });
+    await this.editButton.waitFor({ state: "visible", timeout: TIMEOUTS.LONG });
     await this.page.waitForTimeout(TIMEOUTS.MEDIUM);
   }
 
@@ -187,7 +220,11 @@ export class BackofficeMyAccountPage {
     }
   }
 
-  async editAllPersonalData(name: string, surname: string, document: string): Promise<void> {
+  async editAllPersonalData(
+    name: string,
+    surname: string,
+    document: string,
+  ): Promise<void> {
     await this.clickEditButton();
     await this.fillName(name);
     await this.fillSurname(surname);
@@ -201,14 +238,14 @@ export class BackofficeMyAccountPage {
 
     // Clear name field
     await this.nameInput.click();
-    await this.page.keyboard.press('Control+A');
-    await this.page.keyboard.press('Backspace');
+    await this.page.keyboard.press("Control+A");
+    await this.page.keyboard.press("Backspace");
     await this.nameInput.blur();
 
     // Clear surname field
     await this.surnameInput.click();
-    await this.page.keyboard.press('Control+A');
-    await this.page.keyboard.press('Backspace');
+    await this.page.keyboard.press("Control+A");
+    await this.page.keyboard.press("Backspace");
     await this.surnameInput.blur();
 
     await this.page.waitForTimeout(1000);
@@ -219,7 +256,10 @@ export class BackofficeMyAccountPage {
   }
 
   async hasValidationErrors(): Promise<boolean> {
-    const errorVisible = await this.page.locator('text=/requerido|required|ingresá|obligatorio/i').first().isVisible();
+    const errorVisible = await this.page
+      .locator("text=/requerido|required|ingresá|obligatorio/i")
+      .first()
+      .isVisible();
     return errorVisible;
   }
 
@@ -230,6 +270,31 @@ export class BackofficeMyAccountPage {
 
   async expectSuccessMessage(): Promise<void> {
     // Success is indicated by returning to read mode (edit button visible)
-    await this.editButton.waitFor({ state: 'visible', timeout: TIMEOUTS.LONG });
+    await this.editButton.waitFor({ state: "visible", timeout: TIMEOUTS.LONG });
+  }
+
+  async fillCurrentPassword(password: string): Promise<void> {
+    await this.currentPasswordInput.fill(password);
+  }
+
+  async fillNewPassword(password: string): Promise<void> {
+    await this.newPasswordInput.fill(password);
+  }
+
+  async fillConfirmPassword(password: string): Promise<void> {
+    await this.confirmPasswordInput.fill(password);
+  }
+
+  async changePassword(currentPassword: string, newPassword: string): Promise<void> {
+    // Click the password edit button first
+    await this.passwordEditButton.waitFor({ state: 'visible', timeout: TIMEOUTS.MEDIUM });
+    await this.passwordEditButton.click();
+    await this.page.waitForTimeout(1000);
+
+    // Fill the 3 password fields
+    await this.fillCurrentPassword(currentPassword);
+    await this.fillNewPassword(newPassword);
+    await this.fillConfirmPassword(newPassword);
+    await this.clickSaveButton();
   }
 }
